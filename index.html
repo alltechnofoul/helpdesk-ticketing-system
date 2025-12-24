@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Help Desk - Ticket Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .ticket-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .ticket-form h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tickets-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+        }
+
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ticket-card {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .ticket-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ticket-id {
+            font-weight: 700;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .priority-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .priority-low {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .priority-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .priority-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .ticket-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .ticket-info div {
+            color: #6c757d;
+        }
+
+        .ticket-info strong {
+            color: #495057;
+        }
+
+        .ticket-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .resolve-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .resolve-btn:hover {
+            background: #218838;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-resolved {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 IT Help Desk</h1>
+            <p>Ticket Management System - Built by Benjamin Wright Jr</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Ticket Submission Form -->
+            <div class="ticket-form">
+                <h2>Submit New Ticket</h2>
+                <form id="ticketForm">
+                    <div class="form-group">
+                        <label for="userName">Your Name</label>
+                        <input type="text" id="userName" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userEmail">Email</label>
+                        <input type="email" id="userEmail" placeholder="john.doe@company.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Issue Category</label>
+                        <select id="category" required>
+                            <option value="">Select a category</option>
+                            <option value="Hardware">Hardware Issue</option>
+                            <option value="Software">Software Issue</option>
+                            <option value="Network">Network/Connectivity</option>
+                            <option value="Account">Account/Access</option>
+                            <option value="Email">Email Problem</option>
+                            <option value="Printer">Printer Issue</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="priority">Priority Level</label>
+                        <select id="priority" required>
+                            <option value="">Select priority</option>
+                            <option value="Low">Low - Can wait</option>
+                            <option value="Medium">Medium - Soon as possible</option>
+                            <option value="High">High - Urgent</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Issue Description</label>
+                        <textarea id="description" placeholder="Please describe your issue in detail..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Ticket</button>
+                </form>
+            </div>
+
+            <!-- Tickets Management -->
+            <div class="tickets-section">
+                <h2>All Tickets</h2>
+
+                <!-- Statistics -->
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTickets">0</div>
+                        <div class="stat-label">Total Tickets</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="openTickets">0</div>
+                        <div class="stat-label">Open Tickets</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="resolvedTickets">0</div>
+                        <div class="stat-label">Resolved</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">All Tickets</button>
+                    <button class="filter-btn" data-filter="Open">Open</button>
+                    <button class="filter-btn" data-filter="Resolved">Resolved</button>
+                    <button class="filter-btn" data-filter="High">High Priority</button>
+                </div>
+
+                <!-- Ticket List -->
+                <div class="ticket-list" id="ticketList">
+                    <!-- Tickets will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ticket Management System
+        class TicketSystem {
+            constructor() {
+                this.tickets = this.loadTickets();
+                this.currentFilter = 'all';
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.renderTickets();
+                this.updateStats();
+            }
+
+            setupEventListeners() {
+                // Form submission
+                document.getElementById('ticketForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createTicket();
+                });
+
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.dataset.filter;
+                        this.renderTickets();
+                    });
+                });
+            }
+
+            createTicket() {
+                const ticket = {
+                    id: Date.now(),
+                    userName: document.getElementById('userName').value,
+                    userEmail: document.getElementById('userEmail').value,
+                    category: document.getElementById('category').value,
+                    priority: document.getElementById('priority').value,
+                    description: document.getElementById('description').value,
+                    status: 'Open',
+                    createdAt: new Date().toLocaleString(),
+                    resolvedAt: null
+                };
+
+                this.tickets.unshift(ticket);
+                this.saveTickets();
+                this.renderTickets();
+                this.updateStats();
+                
+                // Reset form
+                document.getElementById('ticketForm').reset();
+                
+                // Show success message
+                alert('Ticket submitted successfully! Ticket ID: #' + ticket.id);
+            }
+
+            resolveTicket(ticketId) {
+                const ticket = this.tickets.find(t => t.id === ticketId);
+                if (ticket) {
+                    ticket.status = 'Resolved';
+                    ticket.resolvedAt = new Date().toLocaleString();
+                    this.saveTickets();
+                    this.renderTickets();
+                    this.updateStats();
+                }
+            }
+
+            deleteTicket(ticketId) {
+                if (confirm('Are you sure you want to delete this ticket?')) {
+                    this.tickets = this.tickets.filter(t => t.id !== ticketId);
+                    this.saveTickets();
+                    this.renderTickets();
+                    this.updateStats();
+                }
+            }
+
+            filterTickets() {
+                if (this.currentFilter === 'all') {
+                    return this.tickets;
+                }
+                return this.tickets.filter(ticket => {
+                    if (this.currentFilter === 'High') {
+                        return ticket.priority === 'High';
+                    }
+                    return ticket.status === this.currentFilter;
+                });
+            }
+
+            renderTickets() {
+                const ticketList = document.getElementById('ticketList');
+                const filteredTickets = this.filterTickets();
+
+                if (filteredTickets.length === 0) {
+                    ticketList.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <h3>No tickets found</h3>
+                            <p>Submit a new ticket to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                ticketList.innerHTML = filteredTickets.map(ticket => `
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <span class="ticket-id">#${ticket.id}</span>
+                            <span class="priority-badge priority-${ticket.priority.toLowerCase()}">${ticket.priority}</span>
+                        </div>
+                        
+                        <div class="ticket-info">
+                            <div><strong>Name:</strong> ${ticket.userName}</div>
+                            <div><strong>Email:</strong> ${ticket.userEmail}</div>
+                            <div><strong>Category:</strong> ${ticket.category}</div>
+                            <div><strong>Status:</strong> <span class="status-badge status-${ticket.status.toLowerCase()}">${ticket.status}</span></div>
+                            <div><strong>Submitted:</strong> ${ticket.createdAt}</div>
+                            ${ticket.resolvedAt ? `<div><strong>Resolved:</strong> ${ticket.resolvedAt}</div>` : ''}
+                        </div>
+                        
+                        <div class="ticket-description">
+                            <strong>Description:</strong><br>
+                            ${ticket.description}
+                        </div>
+                        
+                        <div class="ticket-actions">
+                            ${ticket.status === 'Open' ? 
+                                `<button class="action-btn resolve-btn" onclick="ticketSystem.resolveTicket(${ticket.id})">Mark as Resolved</button>` : 
+                                '<button class="action-btn resolve-btn" disabled style="opacity: 0.5; cursor: not-allowed;">Resolved ✓</button>'
+                            }
+                            <button class="action-btn delete-btn" onclick="ticketSystem.deleteTicket(${ticket.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateStats() {
+                const total = this.tickets.length;
+                const open = this.tickets.filter(t => t.status === 'Open').length;
+                const resolved = this.tickets.filter(t => t.status === 'Resolved').length;
+
+                document.getElementById('totalTickets').textContent = total;
+                document.getElementById('openTickets').textContent = open;
+                document.getElementById('resolvedTickets').textContent = resolved;
+            }
+
+            saveTickets() {
+                localStorage.setItem('helpDeskTickets', JSON.stringify(this.tickets));
+            }
+
+            loadTickets() {
+                const saved = localStorage.getItem('helpDeskTickets');
+                
+                // If no saved tickets, create demo data
+                if (!saved) {
+                    return this.createDemoTickets();
+                }
+                
+                return JSON.parse(saved);
+            }
+
+            createDemoTickets() {
+                const demoTickets = [
+                    {
+                        id: Date.now(),
+                        userName: 'Sarah Johnson',
+                        userEmail: 'sarah.johnson@company.com',
+                        category: 'Hardware',
+                        priority: 'High',
+                        description: 'My laptop won\'t turn on. I tried charging it overnight but there\'s no response when I press the power button. No lights, no sounds. Need this resolved ASAP as I have a presentation at 2 PM.',
+                        status: 'Open',
+                        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: null
+                    },
+                    {
+                        id: Date.now() + 1,
+                        userName: 'Mike Chen',
+                        userEmail: 'mike.chen@company.com',
+                        category: 'Software',
+                        priority: 'Medium',
+                        description: 'Microsoft Excel keeps crashing whenever I try to open large spreadsheets (over 5MB). I\'ve tried restarting my computer but the issue persists. Getting an error message "Excel has stopped working".',
+                        status: 'Open',
+                        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: null
+                    },
+                    {
+                        id: Date.now() + 2,
+                        userName: 'Jennifer Martinez',
+                        userEmail: 'jennifer.martinez@company.com',
+                        category: 'Network',
+                        priority: 'High',
+                        description: 'Cannot connect to the office WiFi network. My laptop shows the network but says "Can\'t connect to this network" when I try. All other devices are working fine. Tried forgetting the network and reconnecting but same issue.',
+                        status: 'Open',
+                        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: null
+                    },
+                    {
+                        id: Date.now() + 3,
+                        userName: 'David Thompson',
+                        userEmail: 'david.thompson@company.com',
+                        category: 'Account',
+                        priority: 'Low',
+                        description: 'Need access to the Marketing shared drive. I just transferred to the Marketing department and don\'t have permissions yet. My manager said to submit a ticket for access.',
+                        status: 'Resolved',
+                        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toLocaleString()
+                    },
+                    {
+                        id: Date.now() + 4,
+                        userName: 'Emily Rodriguez',
+                        userEmail: 'emily.rodriguez@company.com',
+                        category: 'Email',
+                        priority: 'Medium',
+                        description: 'Not receiving emails from external clients. Internal emails work fine but anything from outside the company isn\'t coming through. Checked spam folder - nothing there. Started happening this morning around 9 AM.',
+                        status: 'Open',
+                        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: null
+                    },
+                    {
+                        id: Date.now() + 5,
+                        userName: 'James Wilson',
+                        userEmail: 'james.wilson@company.com',
+                        category: 'Printer',
+                        priority: 'Low',
+                        description: 'Printer on 3rd floor (HP LaserJet by the break room) is showing "Paper Jam" error but I can\'t find any jammed paper. Tried the usual troubleshooting steps from the manual but still not working.',
+                        status: 'Resolved',
+                        createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: new Date(Date.now() - 36 * 60 * 60 * 1000).toLocaleString()
+                    },
+                    {
+                        id: Date.now() + 6,
+                        userName: 'Lisa Anderson',
+                        userEmail: 'lisa.anderson@company.com',
+                        category: 'Software',
+                        priority: 'High',
+                        description: 'VPN connection keeps dropping every 10-15 minutes. I\'m working from home today and need stable connection for client calls. Using the company VPN client, latest version. Internet connection is stable when not on VPN.',
+                        status: 'Open',
+                        createdAt: new Date(Date.now() - 30 * 60 * 1000).toLocaleString(),
+                        resolvedAt: null
+                    },
+                    {
+                        id: Date.now() + 7,
+                        userName: 'Robert Taylor',
+                        userEmail: 'robert.taylor@company.com',
+                        category: 'Hardware',
+                        priority: 'Medium',
+                        description: 'My external monitor is flickering intermittently. It\'s connected via HDMI. I\'ve tried different HDMI cables and different ports on my laptop but issue continues. Monitor is about 2 years old.',
+                        status: 'Resolved',
+                        createdAt: new Date(Date.now() - 72 * 60 * 60 * 1000).toLocaleString(),
+                        resolvedAt: new Date(Date.now() - 60 * 60 * 60 * 1000).toLocaleString()
+                    }
+                ];
+                
+                return demoTickets;
+            }
+        }
+
+        // Initialize the system
+        const ticketSystem = new TicketSystem();
+    </script>
+</body>
+</html>
