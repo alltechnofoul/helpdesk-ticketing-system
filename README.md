@@ -42,12 +42,7 @@ A responsive web-based ticketing system demonstrating IT help desk WORKFLOWS and
 - Email notifications
 - Search and advanced filtering
 
-## A LITTLE ABOUT ME 
-
-Built by **Benjamin Wright Jr** as a portfolio project demonstrating understanding of help desk operations.
-
-Currently seeking help desk, technical support, or junior systems administrator roles.
-
+  
 ## WHY THIS PROJECT
 
 This project was built as part of my transition from military IT operations to civilian technical support roles. It demonstrates my understanding of help desk workflows, ticket management, and my ability to build practical tools for IT operations.
